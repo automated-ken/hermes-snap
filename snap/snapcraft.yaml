@@ -235,3 +235,9 @@ parts:
         "$CRAFT_PART_INSTALL/bin/node"
     build-packages:
       - patchelf
+
+hooks:
+  configure:
+    plugs: [system-observe, network, home]
+  post-refresh:
+    plugs: [system-observe, network, home]
