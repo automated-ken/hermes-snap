@@ -6,6 +6,23 @@ export PLAYWRIGHT_BROWSERS_PATH="$SNAP/usr/share/ms-playwright"
 # See hermes-launch: add the venv site-packages explicitly.
 export PYTHONPATH="$SNAP/lib/python3.12/site-packages${PYTHONPATH:+:$PYTHONPATH}"
 
+# Ensure docker is available in the snap environment
+if command -v docker >/dev/null 2>&1; then
+  # Docker is available, check if daemon is running
+  if ! docker info >/dev/null 2>&1; then
+    echo "Docker daemon not running, but docker command is available" >&2
+  fi
+else
+  # Try to find docker in common locations
+  if [ -S /var/run/docker.sock ]; then
+    echo "Docker socket found at /var/run/docker.sock" >&2
+  elif [ -S /run/docker.sock ]; then
+    echo "Docker socket found at /run/docker.sock" >&2
+  else
+    echo "Docker not detected" >&2
+  fi
+fi
+
 mkdir -p "$HOME/.hermes"
 
 # Start the web dashboard in the background bound to all interfaces so it is
